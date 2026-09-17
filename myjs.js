@@ -115,28 +115,8 @@ function addTodo(text) {
     done: false,
   };
   todos.push(todo);
-  renderAllTodos();   // 전체 재렌더 (드래그 순서 일관성 유지)
+  renderTodo(todo);
   updateUI();
-}
-
-/* ──────────────────────────────────────────
-   전체 목록 재렌더
-   (드래그 순서 반영 또는 초기 로드 시 사용)
-────────────────────────────────────────── */
-function renderAllTodos() {
-  todoList.innerHTML = '';
-  todos.forEach(todo => renderTodo(todo));
-}
-
-/* ──────────────────────────────────────────
-   드래그 & 드롭 상태
-────────────────────────────────────────── */
-let dragSrcId = null;   // 현재 드래그 중인 카드의 id
-
-function clearDragIndicators() {
-  document.querySelectorAll('.todo-item').forEach(el => {
-    el.classList.remove('drag-over-top', 'drag-over-bottom');
-  });
 }
 
 /* ──────────────────────────────────────────
@@ -148,74 +128,7 @@ function renderTodo(todo) {
   li.dataset.id = todo.id;
   if (todo.done) li.classList.add('done');
 
-  /* ── 드래그 핸들 ── */
-  const handle = document.createElement('span');
-  handle.className = 'drag-handle';
-  handle.setAttribute('aria-hidden', 'true');
-  handle.textContent = '⠿';
-
-  /* ── 드래그 이벤트 ──
-     핸들을 잡을 때만 드래그 시작하도록
-     li.draggable 은 mousedown/touchstart 로 토글 */
-  handle.addEventListener('mousedown', () => { li.draggable = true; });
-  handle.addEventListener('mouseup',   () => { li.draggable = false; });
-
-  li.addEventListener('dragstart', (e) => {
-    if (!li.draggable) { e.preventDefault(); return; }
-    dragSrcId = todo.id;
-    e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('text/plain', String(todo.id));
-    // 약간 지연 후 반투명 처리 (ghost 이미지 생성 뒤)
-    setTimeout(() => li.classList.add('dragging'), 0);
-  });
-
-  li.addEventListener('dragend', () => {
-    li.draggable = false;
-    li.classList.remove('dragging');
-    clearDragIndicators();
-    dragSrcId = null;
-  });
-
-  li.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-    if (dragSrcId === todo.id) return;
-
-    clearDragIndicators();
-
-    const rect = li.getBoundingClientRect();
-    if (e.clientY < rect.top + rect.height / 2) {
-      li.classList.add('drag-over-top');
-    } else {
-      li.classList.add('drag-over-bottom');
-    }
-  });
-
-  li.addEventListener('dragleave', (e) => {
-    // li 내부 자식으로 이동한 경우 무시
-    if (li.contains(e.relatedTarget)) return;
-    li.classList.remove('drag-over-top', 'drag-over-bottom');
-  });
-
-  li.addEventListener('drop', (e) => {
-    e.preventDefault();
-    if (dragSrcId === null || dragSrcId === todo.id) return;
-
-    const rect = li.getBoundingClientRect();
-    const insertBefore = e.clientY < rect.top + rect.height / 2;
-
-    // todos 배열 순서 변경
-    const srcIdx  = todos.findIndex(t => t.id === dragSrcId);
-    const [moved] = todos.splice(srcIdx, 1);
-    const destIdx = todos.findIndex(t => t.id === todo.id);
-    todos.splice(insertBefore ? destIdx : destIdx + 1, 0, moved);
-
-    clearDragIndicators();
-    renderAllTodos();   // 새 순서로 전체 재렌더
-    updateUI();
-  });
-
-  /* ── 체크박스 ── */
+  // 체크박스
   const checkbox = document.createElement('input');
   checkbox.type = 'checkbox';
   checkbox.className = 'todo-check';
@@ -228,18 +141,19 @@ function renderTodo(todo) {
     updateUI();
   });
 
-  /* ── 텍스트 ── */
+  // 텍스트
   const span = document.createElement('span');
   span.className = 'todo-text';
   span.textContent = todo.text;
 
-  /* ── 삭제 버튼 ── */
+  // 삭제 버튼
   const btnDel = document.createElement('button');
   btnDel.className = 'btn-delete';
   btnDel.setAttribute('aria-label', `"${todo.text}" 삭제`);
   btnDel.innerHTML = '&#10005;';   // ✕
 
   btnDel.addEventListener('click', () => {
+    // 카드 제거 애니메이션
     li.style.transition = 'opacity 0.22s ease, transform 0.22s ease';
     li.style.opacity = '0';
     li.style.transform = 'translateX(24px)';
@@ -250,11 +164,9 @@ function renderTodo(todo) {
     }, 230);
   });
 
-  // 핸들을 맨 앞에 배치
-  li.append(handle, checkbox, span, btnDel);
+  li.append(checkbox, span, btnDel);
   todoList.appendChild(li);
 }
-
 
 /* ──────────────────────────────────────────
    UI 업데이트 (진행률 바 + 빈 상태 + 축하)

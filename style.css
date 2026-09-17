@@ -215,42 +215,6 @@ body {
   animation: slideIn 0.28s ease both;
 }
 
-/* ── 드래그 핸들 아이콘 ── */
-.drag-handle {
-  color: var(--clr-border);
-  font-size: 18px;
-  line-height: 1;
-  cursor: grab;
-  padding: 0 2px;
-  flex-shrink: 0;
-  user-select: none;
-  -webkit-user-select: none;
-  opacity: 0;
-  transition: opacity var(--duration) var(--ease-apple), color var(--duration);
-}
-
-.todo-item:hover .drag-handle,
-.todo-item:focus-within .drag-handle {
-  opacity: 1;
-}
-
-.drag-handle:active { cursor: grabbing; }
-
-/* 드래그 중인 카드 */
-.todo-item.dragging {
-  opacity: 0.35;
-  cursor: grabbing;
-}
-
-/* 드롭 위치 표시선 */
-.todo-item.drag-over-top {
-  border-top: 2.5px solid var(--clr-primary);
-}
-
-.todo-item.drag-over-bottom {
-  border-bottom: 2.5px solid var(--clr-primary);
-}
-
 .todo-item:hover {
   border-color: var(--clr-primary-light);
   box-shadow: 0 4px 18px rgba(91,110,245,0.14);
