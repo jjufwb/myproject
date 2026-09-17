@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>오늘의 할 일 ✅</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+
+    <!-- 컨페티 캔버스 -->
+    <canvas id="confetti-canvas" aria-hidden="true"></canvas>
+
+    <!-- 앱 전체 래퍼 -->
+    <div class="app-wrapper">
+
+      <!-- 헤더 -->
+      <header class="app-header">
+        <div class="header-inner">
+          <div class="header-title-group">
+            <h1 class="app-title">오늘의 할 일</h1>
+            <p class="app-date" id="today-date"></p>
+          </div>
+          <!-- 할 일 추가 버튼 -->
+          <button
+            class="btn-add"
+            id="btn-open-modal"
+            aria-label="새 할 일 추가"
+            title="새 할 일 추가"
+          >
+            <span aria-hidden="true">+</span>
+          </button>
+        </div>
+
+        <!-- 진행률 바 -->
+        <div class="progress-wrap" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="오늘 할 일 완료율">
+          <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        <p class="progress-text" id="progress-text">0 / 0 완료</p>
+      </header>
+
+      <!-- 메인 콘텐츠 -->
+      <main class="app-main">
+
+        <!-- 할 일이 없을 때 빈 화면 -->
+        <section class="empty-state" id="empty-state" aria-live="polite">
+          <p class="empty-icon" aria-hidden="true">📝</p>
+          <p class="empty-msg">아직 할 일이 없어요!</p>
+          <p class="empty-sub">오른쪽 상단 <strong>+</strong> 버튼을 눌러 추가해 보세요.</p>
+        </section>
+
+        <!-- 할 일 카드 목록 -->
+        <ul class="todo-list" id="todo-list" aria-label="할 일 목록"></ul>
+
+      </main>
+    </div>
+
+    <!-- 할 일 입력 모달 -->
+    <div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title" hidden>
+      <div class="modal">
+        <h2 class="modal-title" id="modal-title">새 할 일 추가</h2>
+        <form id="todo-form" novalidate>
+          <label for="todo-input" class="sr-only">할 일 내용</label>
+          <input
+            type="text"
+            id="todo-input"
+            class="todo-input"
+            placeholder="오늘 할 일을 입력하세요..."
+            maxlength="60"
+            autocomplete="off"
+            required
+          />
+          <p class="input-error" id="input-error" role="alert" aria-live="assertive" hidden>내용을 입력해 주세요.</p>
+          <div class="modal-actions">
+            <button type="button" class="btn-cancel" id="btn-cancel">취소</button>
+            <button type="submit" class="btn-submit">추가하기</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- 축하 오버레이 -->
+    <div class="celebration-overlay" id="celebration-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="celebration-title">
+      <div class="celebration-box">
+        <p class="celebration-emoji" aria-hidden="true">🎉</p>
+        <h2 class="celebration-title" id="celebration-title">모든 할 일 완료!</h2>
+        <p class="celebration-msg">이 모든 일들을 해내시다니<br>정말 최고예요 🤩</p>
+        <button class="btn-reset" id="btn-reset">새로운 하루 시작하기</button>
+      </div>
+    </div>
+
+    <script src="myjs.js"></script>
+  </body>
+</html>
+
